@@ -48,7 +48,8 @@ def load_llm():
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
         #quantization_config=bnb_config,
-        device_map="auto"
+        #device_map="auto"
+        low_cpu_mem_usage=True
     )
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
