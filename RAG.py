@@ -60,8 +60,7 @@ def load_llm():
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=512,
-        pad_token_id=tokenizer.eos_token_id,
-        device="cpu"  
+        pad_token_id=tokenizer.eos_token_id
     )
 
     # model = AutoModelForCausalLM.from_pretrained(
