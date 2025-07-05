@@ -31,11 +31,12 @@ if 'llm' not in st.session_state:
 # Functions
 @st.cache_resource
 def load_embeddings():
-    return HuggingFaceEmbeddings(model_name="bkai-foundation-models/vietnamese-bi-encoder")
+    return HuggingFaceEmbeddings(model_name="bkai-foundation-models/vietnamese-bi-encoder",
+                                model_kwargs={'device': 'cpu'})
 
 @st.cache_resource  
 def load_llm():
-    MODEL_NAME = "lmsys/vicuna-7b-v1.5"
+    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
     #bnb_config = BitsAndBytesConfig(
     #    load_in_4bit=True,  # Hoặc load_in_8bit=True
@@ -47,9 +48,9 @@ def load_llm():
     # Load model với quantization
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        #quantization_config=bnb_config,
-        #device_map="auto"
-        low_cpu_mem_usage=True
+        torch_dtype=torch.float16,  
+        low_cpu_mem_usage=True,
+        device_map="cpu"  
     )
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -60,7 +61,7 @@ def load_llm():
         tokenizer=tokenizer,
         max_new_tokens=512,
         pad_token_id=tokenizer.eos_token_id,
-        device_map="auto"
+        device="cpu"  
     )
 
     # model = AutoModelForCausalLM.from_pretrained(
