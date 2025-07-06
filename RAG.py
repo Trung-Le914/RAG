@@ -53,7 +53,8 @@ def load_embeddings():
 
 @st.cache_resource  
 def load_llm():
-    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    #MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    MODEL_NAME = "Qwen/Qwen1.5-0.5B-Chat"
 
     #bnb_config = BitsAndBytesConfig(
     #    load_in_4bit=True,  # Hoặc load_in_8bit=True
