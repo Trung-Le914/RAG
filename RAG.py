@@ -6,22 +6,6 @@ import torch
 import sys
 import pysqlite3
 
-#if "pysqlite3" in sys.modules:
-#    print("DEBUG: 'pysqlite3' found in sys.modules before pop.")
-#    try:
-#        # Thử kết nối để xác nhận pysqlite3 hoạt động
-#        conn = pysqlite3.connect(":memory:")
-#        cursor = conn.cursor()
-#        cursor.execute("SELECT SQLITE_VERSION()")
-#        version = cursor.fetchone()[0]
-#        print(f"DEBUG: pysqlite3 version: {version}")
-#        conn.close()
-#    except Exception as e:
-#        print(f"DEBUG: Error testing pysqlite3 connection: {e}")
-#else:
-#    print("DEBUG: 'pysqlite3' NOT found in sys.modules before pop. This is unexpected.")
-
-
 sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
 from langchain_community.document_loaders import PyPDFLoader
@@ -175,7 +159,8 @@ def main():
         question = st.text_input("Đặt câu hỏi:")
         if question:
             with st.spinner("Đang trả lời..."):
-                output = st.session_state.rag_chain.invoke(question)
+                output = st.session_state.rag_chain.invoke({"query": question})
+                #output = st.session_state.rag_chain.invoke(question)
                 answer = output.split('Answer:')[1].strip() if 'Answer:' in output else output.strip()
                 st.write("**Trả lời:**")
                 st.write(answer)
