@@ -3,8 +3,8 @@ import tempfile
 import os
 import torch
 
-import sys
-import pysqlite3
+#import sys
+#import pysqlite3
 
 if "pysqlite3" in sys.modules:
     print("DEBUG: 'pysqlite3' found in sys.modules before pop.")
@@ -22,7 +22,7 @@ else:
     print("DEBUG: 'pysqlite3' NOT found in sys.modules before pop. This is unexpected.")
 
 
-sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+#sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
