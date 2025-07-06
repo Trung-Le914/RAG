@@ -19,6 +19,9 @@ from langchain_core.runnables import RunnablePassthrough
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from transformers import BitsAndBytesConfig
 
+from transformers import pipeline
+from langchain_community.llms import HuggingFacePipeline
+
 # Session state initialization
 if 'rag_chain' not in st.session_state:
     st.session_state.rag_chain = None
@@ -41,13 +44,6 @@ def load_llm():
     #MODEL_NAME = "Qwen/Qwen1.5-0.5B-Chat"
     MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
-    #bnb_config = BitsAndBytesConfig(
-    #    load_in_4bit=True,  # Hoặc load_in_8bit=True
-    #    bnb_4bit_use_double_quant=True,
-    #    bnb_4bit_compute_dtype=torch.bfloat16,
-    #    bnb_4bit_quant_type="nf4"  # nf4 là lựa chọn tốt cho mô hình lớn
-    #)
-
     # Load model với quantization
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
@@ -66,28 +62,13 @@ def load_llm():
         pad_token_id=tokenizer.eos_token_id
     )
 
-    # model = AutoModelForCausalLM.from_pretrained(
-    #     MODEL_NAME,
-    #     torch_dtype=torch.float16,  # hoặc torch.float16 nếu muốn tiết kiệm memory
-    #     low_cpu_mem_usage=True,
-    #     device_map="cpu"  # Explicitly set to CPU
-    # )
-    
-    # tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    
-    # # Create pipeline with CPU device
-    # model_pipeline = pipeline(
-    #     "text-generation",
-    #     model=model,
-    #     tokenizer=tokenizer,
-    #     max_new_tokens=512,
-    #     pad_token_id=tokenizer.eos_token_id,
-    #     device="cpu"  # Explicitly set device to CPU
-    # )
-    
     return HuggingFacePipeline(pipeline=model_pipeline)
 
 def process_pdf(uploaded_file):
+    if st.session_state.llm is None:
+        st.error("Mô hình LLM chưa được tải hoặc bị lỗi. Vui lòng thử lại hoặc kiểm tra log.")
+        return None, 0
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         tmp_file_path = tmp_file.name
@@ -96,7 +77,7 @@ def process_pdf(uploaded_file):
     documents = loader.load()
     
     semantic_splitter = SemanticChunker(
-        embeddings=st.session_state.embeddings,
+        embeddings=st.session_state.embedding,
         buffer_size=1,
         breakpoint_threshold_type="percentile", 
         breakpoint_threshold_amount=95,
@@ -115,8 +96,8 @@ def process_pdf(uploaded_file):
     
     rag_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
-        | prompt 
-        | st.session_state.llm
+        | prompt
+        | st.session_state.llm 
         | StrOutputParser()
     )
     
