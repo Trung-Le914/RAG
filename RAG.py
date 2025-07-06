@@ -3,8 +3,25 @@ import tempfile
 import os
 import torch
 
-import pysqlite3
 import sys
+import pysqlite3
+
+if "pysqlite3" in sys.modules:
+    print("DEBUG: 'pysqlite3' found in sys.modules before pop.")
+    try:
+        # Thử kết nối để xác nhận pysqlite3 hoạt động
+        conn = pysqlite3.connect(":memory:")
+        cursor = conn.cursor()
+        cursor.execute("SELECT SQLITE_VERSION()")
+        version = cursor.fetchone()[0]
+        print(f"DEBUG: pysqlite3 version: {version}")
+        conn.close()
+    except Exception as e:
+        print(f"DEBUG: Error testing pysqlite3 connection: {e}")
+else:
+    print("DEBUG: 'pysqlite3' NOT found in sys.modules before pop. This is unexpected.")
+
+
 sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
 from langchain_community.document_loaders import PyPDFLoader
