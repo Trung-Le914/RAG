@@ -86,7 +86,7 @@ def process_pdf(uploaded_file):
     )
     
     docs = semantic_splitter.split_documents(documents)
-    vector_db = Chroma.from_documents(documents=docs, embeddings=st.session_state.embeddings)
+    vector_db = Chroma.from_documents(documents=docs, embedding=st.session_state.embeddings)
     retriever = vector_db.as_retriever()
     
     prompt = hub.pull("rlm/rag-prompt")
