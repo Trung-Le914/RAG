@@ -112,7 +112,7 @@ def process_pdf(uploaded_file):
     documents = loader.load()
     
     semantic_splitter = SemanticChunker(
-        embeddings=st.session_state.embeddings,
+        embeddings=st.session_state.embedding,
         buffer_size=1,
         breakpoint_threshold_type="percentile", 
         breakpoint_threshold_amount=95,
