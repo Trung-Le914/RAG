@@ -40,9 +40,10 @@ def load_embeddings():
 
 @st.cache_resource  
 def load_llm():
-    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    #MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
     #MODEL_NAME = "Qwen/Qwen1.5-0.5B-Chat"
     #MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+    MODEL_NAME = "EleutherAI/pythia-160m" 
 
     # Load model với quantization
     model = AutoModelForCausalLM.from_pretrained(
