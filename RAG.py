@@ -140,8 +140,8 @@ def main():
         question = st.text_input("Đặt câu hỏi:")
         if question:
             with st.spinner("Đang trả lời..."):
-                output = st.session_state.rag_chain.invoke({"query": question})
-                #output = st.session_state.rag_chain.invoke(question)
+                #output = st.session_state.rag_chain.invoke({"query": question})
+                output = st.session_state.rag_chain.invoke(question)
                 answer = output.split('Answer:')[1].strip() if 'Answer:' in output else output.strip()
                 st.write("**Trả lời:**")
                 st.write(answer)
